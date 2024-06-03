@@ -1,0 +1,9 @@
+1- Count no of lines, tabs, spaces, words, chars 
+2- lexical analyzed for sample language
+3- syntax checking of subset of given language using lex and yacc
+4- syntax checking of control statements using lex and yacc
+5- syntax checking of declaration statements
+6- desk calculator
+7- intermediate code generation for sample language
+8- code optimization
+9- code generation
