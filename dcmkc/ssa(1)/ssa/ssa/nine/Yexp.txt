@@ -1,0 +1,80 @@
+%{
+#include <stdio.h>
+%}
+
+%token Det Noun Verb Pronoun CONJ Preposition
+%nonassoc Noun
+%nonassoc Preposition 
+%nonassoc CONJ
+%%
+S1: S1 S
+  |S
+  ;
+S : SS '.' {printf("simple sentence\n");}
+  | CS '.' {printf("Compound sentence\n");}
+  ;
+CS : SS CONJ SS {printf("cs\n");} 
+   | CS CONJ SS 
+;
+SS : NP VP  {printf("ss\n");}
+  | VP  {printf("1\n");}
+  ;
+NP :Det Noun {printf("2\n");}
+   |Noun {printf("3\n");}
+   |Pronoun {printf("4\n");}
+   |Det Noun PP {printf("5\n");}
+  ;
+VP : Verb NP  {printf("6\n");}
+   | Verb     {printf("7\n");}
+   | VP PP  {printf("8\n");}
+   ;
+PP : Preposition NP  {printf("9\n");}
+   ;
+%%
+void main()
+{
+yyparse();
+}
+
+int yyerror(char * msg)
+{
+printf("%s\n",msg);
+return 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+This code seems to be a Yacc (or Bison) file, which is used for generating parsers. It works alongside a Lex file, which defines the lexical rules, to parse input strings according to a specified grammar. Let's break down each section:
+
+%{ ... %}: This is a "C" block enclosed within %{ ... %}. The code inside this block is copied verbatim to the generated parser file. In this case, it includes the standard input-output header file (<stdio.h>).
+
+%token: This section defines tokens that will be used in the parser. Each token represents a type of lexical unit recognized by the lexer (defined in the accompanying Lex file). Here, Det, Noun, Verb, Pronoun, CONJ, and Preposition are defined as tokens.
+
+%nonassoc: This section specifies tokens that are non-associative. Non-associative tokens are those that don't associate with other instances of the same token in an expression. Here, Noun, Preposition, and CONJ are declared as non-associative.
+
+%%: This is a delimiter used to separate the grammar rules from the C code.
+
+Grammar rules:
+
+S1: S1 S | S;: This rule defines a sentence (S1) as either a sequence of sentences followed by another sentence (S1 S), or just a single sentence (S).
+S: SS '.' {printf("simple sentence\n");} | CS '.' {printf("Compound sentence\n");};: This rule defines a sentence (S) as either a simple sentence (SS) followed by a period, or a compound sentence (CS) followed by a period. After parsing, it prints whether the sentence is simple or compound.
+CS: SS CONJ SS {printf("cs\n");} | CS CONJ SS;: This rule defines a compound sentence (CS) as either two simple sentences (SS) connected by a conjunction (CONJ), or a compound sentence followed by a conjunction and a simple sentence.
+SS: NP VP {printf("ss\n");} | VP;: This rule defines a simple sentence (SS) as a noun phrase (NP) followed by a verb phrase (VP). It prints "ss" after parsing.
+NP: Det Noun | Noun | Pronoun | Det Noun PP;: This rule defines a noun phrase (NP) as either a determiner (Det) followed by a noun (Noun), or just a noun, or a pronoun, or a determiner followed by a noun and a prepositional phrase (PP).
+VP: Verb NP | Verb | VP PP;: This rule defines a verb phrase (VP) as either a verb (Verb) followed by a noun phrase (NP), or just a verb, or a verb phrase followed by a prepositional phrase (PP).
+PP: Preposition NP;: This rule defines a prepositional phrase (PP) as a preposition (Preposition) followed by a noun phrase (NP).
+void main() {...}: This is the main function of the program. It calls yyparse() to start parsing.
+
+int yyerror(char * msg) {...}: This function is called when an error occurs during parsing. It prints the error message passed to it.
+
+This Yacc file defines the grammar rules for parsing sentences in a simple language and includes actions to print messages during parsing. When combined with the Lex file, it can parse sentences according to the defined grammar

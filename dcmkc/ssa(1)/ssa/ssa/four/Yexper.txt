@@ -1,0 +1,301 @@
+%{
+#include <stdio.h>
+%}
+%token id NUM OR AND NOT relop TRUE FALSE INC DEC IF ELSE DO WHILE uminus FOR SWITCH CASE BREAK DEFAULT
+%right '='
+%left '+' '-'
+%left '*' '/'
+%right '^'
+%nonassoc uminus
+%left OR
+%left AND
+%nonassoc NOT
+%%
+
+S1 : S1 S
+   | S
+   ;
+  
+ S : AS ';' {printf("Assignment statement accepted \n");}
+   |IFS     {printf("If statement is accepted \n");}
+   |IFES    {printf("If else statement is accepted\n");}
+   |WS      {printf("While statement is accepted\n");}
+   |DWS     {printf("Do while statement is accepted\n");}
+   |FORS    {printf("For statement is accepted\n");}
+   |SS	     {printf("Switch statement is accepted");}
+   ;
+   
+SS : SWITCH'('E')''{' CV '}'
+;
+
+CV : CASE E ':' S1 BREAK ';'
+   | CASE E ':' S1 BREAK ';' CV 
+   |  CASE E ':' S1 BREAK ';'  DEFAULT ':' S1 
+   ;
+AS :  id '=' E
+   ;
+   
+E : E'+'E
+  |E'-'E
+  |E'*'E
+  |E'/'E
+  |E'^'E
+  |'-' E %prec uminus
+  |id
+  |NUM
+  ;
+IFS: IF'('BE')''{'S1'}'
+   ;
+   
+BE : BE OR BE
+   | BE AND BE 
+   | NOT BE
+   |id relop id
+   |TRUE
+   |FALSE
+   ;
+   
+IFES : IF'('BE')''{'S1'}'ELSE'{'S1'}'
+     ;
+
+WS : WHILE '('BE')''{'S1'}'
+   ;
+   
+DWS : DO '{'S1'}'WHILE'('BE')'';'
+   ;
+   
+FORS : FOR'('IS';'BE';'MS')''{'S1'}'
+     ;
+     
+IS : AS
+   | IS ',' AS
+   ;
+   
+MS : IS
+   | id INC
+   | INC id
+   | id DEC
+   | DEC id
+   ;
+   
+%% 
+void main()
+{
+yyparse();
+}
+int yyerror(char *msg)
+{
+ printf("%s\n",msg);
+}
+
+
+
+
+
+This code is a Yacc/Bison specification for parsing a subset of a programming language with constructs such as assignments, if-statements, while loops, for loops, and switch statements. Here's a line-by-line explanation of the code:
+
+Header Section
+c
+Copy code
+%{
+#include <stdio.h>
+%}
+%{ %}: Denotes the beginning and end of the C code to be copied directly into the generated parser.
+#include <stdio.h>: Includes the standard input-output library for functions like printf.
+Token Definitions
+c
+Copy code
+%token id NUM OR AND NOT relop TRUE FALSE INC DEC IF ELSE DO WHILE uminus FOR SWITCH CASE BREAK DEFAULT
+%token: Declares tokens used in the grammar rules. These correspond to the parts of speech and operators that the lexer (Flex) will recognize.
+Operator Precedence and Associativity
+c
+Copy code
+%right '='
+%left '+' '-'
+%left '*' '/'
+%right '^'
+%nonassoc uminus
+%left OR
+%left AND
+%nonassoc NOT
+These lines define the precedence and associativity of operators.
+%right and %left specify right and left associativity, respectively.
+%nonassoc specifies non-associative operators.
+The precedence of operators is defined by their order, with lower lines having higher precedence.
+Grammar Rules Section
+c
+Copy code
+%%
+S1 : S1 S
+   | S
+   ;
+%%: Marks the beginning of the grammar rules section.
+S1: Defines a list of statements (S1 can be multiple S statements).
+S1 S: A sequence of statements.
+S: A single statement.
+c
+Copy code
+S : AS ';' {printf("Assignment statement accepted \n");}
+   | IFS {printf("If statement is accepted \n");}
+   | IFES {printf("If else statement is accepted\n");}
+   | WS {printf("While statement is accepted\n");}
+   | DWS {printf("Do while statement is accepted\n");}
+   | FORS {printf("For statement is accepted\n");}
+   | SS {printf("Switch statement is accepted");}
+   ;
+S: Defines a statement.
+AS ';': An assignment statement followed by a semicolon.
+IFS: An if statement.
+IFES: An if-else statement.
+WS: A while statement.
+DWS: A do-while statement.
+FORS: A for statement.
+SS: A switch statement.
+Each rule has an action, which is to print a message indicating the type of statement accepted.
+c
+Copy code
+SS : SWITCH '(' E ')' '{' CV '}'
+   ;
+SS: Defines a switch statement.
+SWITCH '(' E ')' '{' CV '}': A switch statement with an expression (E) in parentheses and a case value list (CV) within curly braces.
+c
+Copy code
+CV : CASE E ':' S1 BREAK ';'
+   | CASE E ':' S1 BREAK ';' CV 
+   | CASE E ':' S1 BREAK ';' DEFAULT ':' S1 
+   ;
+CV: Defines the case values for a switch statement.
+CASE E ':' S1 BREAK ';': A case with an expression followed by statements and a break.
+CASE E ':' S1 BREAK ';' CV: A case followed by another case.
+CASE E ':' S1 BREAK ';' DEFAULT ':' S1: A case followed by a default case.
+c
+Copy code
+AS : id '=' E
+   ;
+AS: Defines an assignment statement.
+id '=' E: An identifier followed by an equals sign and an expression.
+c
+Copy code
+E : E '+' E
+  | E '-' E
+  | E '*' E
+  | E '/' E
+  | E '^' E
+  | '-' E %prec uminus
+  | id
+  | NUM
+  ;
+E: Defines an expression.
+E '+' E: Addition.
+E '-' E: Subtraction.
+E '*' E: Multiplication.
+E '/' E: Division.
+E '^' E: Exponentiation.
+'-' E %prec uminus: Unary minus with precedence defined by uminus.
+id: An identifier.
+NUM: A number.
+c
+Copy code
+IFS : IF '(' BE ')' '{' S1 '}'
+   ;
+IFS: Defines an if statement.
+IF '(' BE ')' '{' S1 '}': An if statement with a boolean expression (BE) and a block of statements.
+c
+Copy code
+BE : BE OR BE
+   | BE AND BE 
+   | NOT BE
+   | id relop id
+   | TRUE
+   | FALSE
+   ;
+BE: Defines a boolean expression.
+BE OR BE: Logical OR.
+BE AND BE: Logical AND.
+NOT BE: Logical NOT.
+id relop id: Relational operation between identifiers.
+TRUE: Boolean true.
+FALSE: Boolean false.
+c
+Copy code
+IFES : IF '(' BE ')' '{' S1 '}' ELSE '{' S1 '}'
+     ;
+IFES: Defines an if-else statement.
+IF '(' BE ')' '{' S1 '}' ELSE '{' S1 '}': An if statement with an else clause.
+c
+Copy code
+WS : WHILE '(' BE ')' '{' S1 '}'
+   ;
+WS: Defines a while statement.
+WHILE '(' BE ')' '{' S1 '}': A while loop with a boolean expression and a block of statements.
+c
+Copy code
+DWS : DO '{' S1 '}' WHILE '(' BE ')' ';'
+   ;
+DWS: Defines a do-while statement.
+DO '{' S1 '}' WHILE '(' BE ')' ';': A do-while loop with a block of statements and a boolean expression.
+c
+Copy code
+FORS : FOR '(' IS ';' BE ';' MS ')' '{' S1 '}'
+     ;
+FORS: Defines a for statement.
+FOR '(' IS ';' BE ';' MS ')' '{' S1 '}': A for loop with initialization (IS), a boolean expression, and modification statements (MS), followed by a block of statements.
+c
+Copy code
+IS : AS
+   | IS ',' AS
+   ;
+IS: Defines initialization statements.
+AS: A single assignment statement.
+IS ',' AS: Multiple assignment statements separated by commas.
+c
+Copy code
+MS : IS
+   | id INC
+   | INC id
+   | id DEC
+   | DEC id
+   ;
+MS: Defines modification statements.
+IS: Initialization statements.
+id INC: Increment identifier.
+INC id: Pre-increment identifier.
+id DEC: Decrement identifier.
+DEC id: Pre-decrement identifier.
+Auxiliary Functions Section
+c
+Copy code
+%% 
+void main()
+{
+    yyparse();
+}
+%%: Marks the end of the grammar rules section.
+void main(): Defines the main function.
+yyparse();: Calls the parser function to start parsing the input.
+c
+Copy code
+int yyerror(char *msg)
+{
+    printf("%s\n",msg);
+}
+int yyerror(char *msg): Defines the error handling function.
+printf("%s\n",msg);: Prints the error message.
+Summary
+This Yacc/Bison code defines the grammar for recognizing and parsing various statements in a programming language.
+It specifies how to parse assignment, if, if-else, while, do-while, for, and switch statements.
+Each rule prints a message when the corresponding statement is accepted.
+The main function starts the parsing process by calling yyparse.
+The yyerror function handles syntax errors by printing an error message.
+
+
+
+
+
+
+
+
+
+
+
+

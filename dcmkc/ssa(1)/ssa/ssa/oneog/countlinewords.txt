@@ -1,0 +1,118 @@
+%{  
+# include<stdio.h> 
+int lc=0,tc=0,sc=0,wc=0,cc=0; 
+%} 
+%% 
+[^ \t\n]+    {cc+=yyleng; wc++;}
+[ ]          {cc++;sc++;} 
+[\t]         {cc++; tc++;} 
+\n           {cc++; lc++;} 
+%% 
+main() 
+{ 
+yyin = fopen("a9.txt","r"); 
+yyout=fopen("a8.txt","w"); 
+yylex(); 
+fclose(yyin); 
+fclose(yyout); 
+} 
+int yywrap() 
+{ 
+fprintf(yyout,"no. of lines =%d\n",lc); 
+fprintf(yyout,"no. of tabs=%d\n",tc); 
+fprintf(yyout,"no. of characters = %d\n",cc); 
+fprintf(yyout,"no. of spaces = %d\n",sc); 
+fprintf(yyout,"no. of words=%d\n",wc); 
+return 1; 
+} 
+
+Includes and Global Variables
+c
+Copy code
+#include<stdio.h> 
+int lc=0,tc=0,sc=0,wc=0,cc=0; 
+#include<stdio.h>: This includes the standard input-output library in C, allowing the program to use functions like printf, fprintf, fopen, etc.
+int lc=0,tc=0,sc=0,wc=0,cc=0;: These are global integer variables initialized to zero. They will be used to count lines (lc), tabs (tc), spaces (sc), words (wc), and characters (cc).
+Lexical Rules
+c
+Copy code
+%% 
+[^ \t\n]+    {cc+=yyleng; wc++;}
+[ ]          {cc++;sc++;} 
+[\t]         {cc++; tc++;} 
+\n           {cc++; lc++;} 
+%% 
+%%: This marks the beginning of the lexical rules section in a Lex/Flex program.
+
+[^ \t\n]+ {cc+=yyleng; wc++;}: This rule matches one or more characters that are not a space ( ), tab (\t), or newline (\n). For each match:
+
+cc+=yyleng; increments the character count by the length of the matched string (yyleng is a Lex/Flex variable representing the length of the current token).
+wc++; increments the word count.
+[ ] {cc++;sc++;}: This rule matches a single space character. For each match:
+
+cc++; increments the character count.
+sc++; increments the space count.
+[\t] {cc++; tc++;}: This rule matches a single tab character. For each match:
+
+cc++; increments the character count.
+tc++; increments the tab count.
+\n {cc++; lc++;}: This rule matches a single newline character. For each match:
+
+cc++; increments the character count.
+lc++; increments the line count.
+Main Function
+c
+Copy code
+main() 
+{ 
+yyin = fopen("a9.txt","r"); 
+yyout=fopen("a8.txt","w"); 
+yylex(); 
+fclose(yyin); 
+fclose(yyout); 
+} 
+main(): This is the main function of the program.
+
+yyin = fopen("a9.txt","r");: Opens the file "a9.txt" for reading and assigns the file pointer to yyin. yyin is a Lex/Flex variable that represents the input file.
+
+yyout=fopen("a8.txt","w");: Opens the file "a8.txt" for writing and assigns the file pointer to yyout. yyout is a Lex/Flex variable that represents the output file.
+
+yylex();: Calls the yylex function, which starts the lexical analysis process defined by the rules above.
+
+fclose(yyin);: Closes the input file "a9.txt".
+
+fclose(yyout);: Closes the output file "a8.txt".
+
+yywrap Function
+c
+Copy code
+int yywrap() 
+{ 
+fprintf(yyout,"no. of lines =%d\n",lc); 
+fprintf(yyout,"no. of tabs=%d\n",tc); 
+fprintf(yyout,"no. of characters = %d\n",cc); 
+fprintf(yyout,"no. of spaces = %d\n",sc); 
+fprintf(yyout,"no. of words=%d\n",wc); 
+return 1; 
+}  
+int yywrap(): This function is called by yylex when the end of the input file is reached.
+
+fprintf(yyout,"no. of lines =%d\n",lc);: Writes the number of lines counted to the output file.
+
+fprintf(yyout,"no. of tabs=%d\n",tc);: Writes the number of tabs counted to the output file.
+
+fprintf(yyout,"no. of characters = %d\n",cc);: Writes the number of characters counted to the output file.
+
+fprintf(yyout,"no. of spaces = %d\n",sc);: Writes the number of spaces counted to the output file.
+
+fprintf(yyout,"no. of words=%d\n",wc);: Writes the number of words counted to the output file.
+
+return 1;: Returns 1, indicating the end of the input has been successfully handled.
+
+Summary
+This program is a lexical analyzer that reads an input file ("a9.txt"), counts the number of lines, tabs, spaces, words, and characters, and writes these counts to an output file ("a8.txt"). It uses Lex/Flex to define the patterns for matching and counting these elements.
+
+commands:
+lex file.l
+gcc lex.yy.c
+./a.out < filename.txt

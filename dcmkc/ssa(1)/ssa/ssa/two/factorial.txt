@@ -1,0 +1,16 @@
+#include<bits/stdc++.h>
+using namespace std;
+// int fact(int n){
+//     int temp =  n*fact(n-1);
+//     cout<<temp;
+// }
+int main(){
+    int n;
+    cout<<"Enter any number:";
+    cin>>n;
+    int fact=1;
+    for(int i=1;i<=n;i++){
+        fact = fact*i;
+    }
+    cout<<fact<<endl;
+}

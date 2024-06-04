@@ -1,0 +1,161 @@
+%{
+#include <stdio.h>
+#include <stdlib.h> // Added for the exit() function
+%}
+
+%start S
+%token id INT INUM
+
+%%
+
+S : S DL  { printf("Declaration accepted\n"); }
+  | DL     { printf("Declaration accepted\n"); }
+  ;
+
+DL : INTV ';' 
+   ;
+
+INTV : INT IV 
+     ;
+
+IV : I
+   | IV ',' id
+   | IV ',' id '=' INUM
+   | id '=' INUM
+   ;
+
+I : id
+  ;
+
+%%
+
+int main()
+{
+    printf("Enter Valid Declaration\n");
+    yyparse();
+    return 0;
+}
+
+int yyerror(char *msg)
+{
+    printf("Invalid Statement\n");
+    printf("%s\n", msg);
+    exit(1); // Changed square brackets to parentheses for exit() function
+}
+
+
+
+
+
+
+This code is a Yacc/Bison specification for parsing simple variable declarations in a programming language. The declarations include the int keyword, variable names, and optional initialization with integer values. Here is a line-by-line explanation:
+
+Header Section
+c
+Copy code
+%{
+#include <stdio.h>
+#include <stdlib.h> // Added for the exit() function
+%}
+%{ %}: Denotes the beginning and end of the C code to be copied directly into the generated parser.
+#include <stdio.h>: Includes the standard input-output library for functions like printf.
+#include <stdlib.h>: Includes the standard library for functions like exit.
+Declarations
+c
+Copy code
+%start S
+%token id INT INUM
+%start S: Specifies the start symbol for the grammar (S in this case).
+%token: Declares tokens used in the grammar rules. These correspond to parts of speech that the lexer (Flex) will recognize:
+id: Identifier (variable name).
+INT: The keyword int.
+INUM: Integer number.
+Grammar Rules Section
+c
+Copy code
+%%
+
+S : S DL  { printf("Declaration accepted\n"); }
+  | DL     { printf("Declaration accepted\n"); }
+  ;
+%%: Marks the beginning of the grammar rules section.
+S: Defines the start symbol for the grammar, representing a sequence of declarations.
+S DL: A sequence of declarations followed by another declaration.
+DL: A single declaration.
+{ printf("Declaration accepted\n"); }: Action taken when the rule is matched, printing a message.
+c
+Copy code
+DL : INTV ';' 
+   ;
+DL: Defines a declaration line.
+INTV ';': A declaration with INTV (int variable declarations) followed by a semicolon.
+c
+Copy code
+INTV : INT IV 
+     ;
+INTV: Defines an int variable declaration.
+INT IV: The keyword INT followed by IV (variable list).
+c
+Copy code
+IV : I
+   | IV ',' id
+   | IV ',' id '=' INUM
+   | id '=' INUM
+   ;
+IV: Defines a list of int variables.
+I: A single identifier.
+IV ',' id: A list of identifiers separated by commas.
+IV ',' id '=' INUM: A list of identifiers with one initialized variable.
+id '=' INUM: A single initialized variable.
+c
+Copy code
+I : id
+  ;
+I: Defines a single identifier.
+id: A single variable name.
+Auxiliary Functions Section
+c
+Copy code
+%%
+%%: Marks the end of the grammar rules section.
+c
+Copy code
+int main()
+{
+    printf("Enter Valid Declaration\n");
+    yyparse();
+    return 0;
+}
+int main(): Defines the main function.
+printf("Enter Valid Declaration\n");: Prints a prompt for the user.
+yyparse();: Calls the parser function to start parsing the input.
+return 0;: Indicates successful completion.
+c
+Copy code
+int yyerror(char *msg)
+{
+    printf("Invalid Statement\n");
+    printf("%s\n", msg);
+    exit(1); // Changed square brackets to parentheses for exit() function
+}
+int yyerror(char *msg): Defines the error handling function.
+printf("Invalid Statement\n");: Prints an error message.
+printf("%s\n", msg);: Prints the error message passed to the function.
+exit(1);: Exits the program with an error status.
+Summary
+This Yacc/Bison code defines the grammar for recognizing and parsing variable declarations in a programming language.
+It specifies how to parse declarations with the int keyword, variable names, and optional initializations.
+Each rule prints a message when the corresponding declaration is accepted.
+The main function starts the parsing process by calling yyparse.
+The yyerror function handles syntax errors by printing an error message and exiting the program.
+
+
+
+
+
+
+
+
+
+
+

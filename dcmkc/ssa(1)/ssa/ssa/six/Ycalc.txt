@@ -1,0 +1,164 @@
+%{
+/* Definition section */
+#include<stdio.h>
+int flag=0;
+%}
+
+%token NUMBER
+
+%left '+' '-'
+
+%left '*' '/' '%'
+
+%left '(' ')'
+
+/* Rule Section */
+%%
+
+ArithmeticExpression: E{
+
+		printf("\nResult=%d\n", $$);
+
+		return 0;
+
+		};
+E:E'+'E {$$=$1+$3;}
+
+|E'-'E {$$=$1-$3;}
+
+|E'*'E {$$=$1*$3;}
+
+|E'/'E {$$=$1/$3;}
+
+|E'%'E {$$=$1%$3;}
+
+|'('E')' {$$=$2;}
+
+| NUMBER {$$=$1;}
+
+;
+
+%%
+
+//driver code
+void main()
+{
+printf("\nEnter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Division, Modulus and Round brackets:\n");
+
+yyparse();
+if(flag==0)
+printf("\nEntered arithmetic expression is Valid\n\n");
+}
+
+void yyerror()
+{
+printf("\nEntered arithmetic expression is Invalid\n\n");
+flag=1;
+}
+
+
+
+
+
+
+
+
+
+This code is a Yacc/Bison specification for parsing and evaluating simple arithmetic expressions. It handles basic arithmetic operations and parentheses. Here's a detailed line-by-line explanation:
+
+Header Section
+c
+Copy code
+%{
+/* Definition section */
+#include<stdio.h>
+int flag=0;
+%}
+%{ %}: Denotes the beginning and end of the C code to be copied directly into the generated parser.
+#include <stdio.h>: Includes the standard input-output library for functions like printf.
+int flag=0;: Declares a flag variable initialized to 0. This flag is used to indicate whether the input expression is valid or invalid.
+Token Declarations
+c
+Copy code
+%token NUMBER
+%token NUMBER: Declares a token NUMBER. This token will be used to represent numerical values in the arithmetic expressions.
+Operator Precedence
+c
+Copy code
+%left '+' '-'
+%left '*' '/' '%'
+%left '(' ')'
+%left: Specifies the associativity and precedence of the operators. Operators listed later have higher precedence.
+'+' '-': Addition and subtraction operators are left-associative.
+'*' '/' '%': Multiplication, division, and modulus operators are left-associative and have higher precedence than addition and subtraction.
+'(' ')': Parentheses for grouping expressions.
+Grammar Rules Section
+c
+Copy code
+%%
+
+ArithmeticExpression: E{
+		printf("\nResult=%d\n", $$);
+		return 0;
+		};
+%%: Marks the beginning and end of the grammar rules section.
+ArithmeticExpression: The start symbol for the grammar, representing the entire arithmetic expression.
+E: The non-terminal for expressions.
+{ printf("\nResult=%d\n", $$); return 0; }: Prints the result of the expression and returns 0, indicating successful parsing.
+c
+Copy code
+E:E'+'E {$$=$1+$3;}
+|E'-'E {$$=$1-$3;}
+|E'*'E {$$=$1*$3;}
+|E'/'E {$$=$1/$3;}
+|E'%'E {$$=$1%$3;}
+|'('E')' {$$=$2;}
+| NUMBER {$$=$1;}
+;
+E: Defines the grammar rules for expressions.
+E'+'E {$$=$1+$3;}: Matches an addition operation. The result of the operation is stored in $$.
+E'-'E {$$=$1-$3;}: Matches a subtraction operation.
+E'*'E {$$=$1*$3;}: Matches a multiplication operation.
+E'/'E {$$=$1/$3;}: Matches a division operation.
+E'%'E {$$=$1%$3;}: Matches a modulus operation.
+'('E')' {$$=$2;}: Matches an expression enclosed in parentheses. The result is the value of the inner expression.
+NUMBER {$$=$1;}: Matches a numerical value.
+Auxiliary Functions Section
+c
+Copy code
+%%
+
+//driver code
+void main()
+{
+    printf("\nEnter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Division, Modulus and Round brackets:\n");
+    yyparse();
+    if(flag==0)
+        printf("\nEntered arithmetic expression is Valid\n\n");
+}
+
+void yyerror()
+{
+    printf("\nEntered arithmetic expression is Invalid\n\n");
+    flag=1;
+}
+%%: Marks the end of the grammar rules section.
+
+void main(): The main function.
+
+printf("\nEnter Any Arithmetic Expression which can have operations Addition, Subtraction, Multiplication, Division, Modulus and Round brackets:\n");: Prompts the user to enter an arithmetic expression.
+yyparse();: Calls the parser to start parsing the input.
+if(flag==0) printf("\nEntered arithmetic expression is Valid\n\n");: If the flag is still 0 after parsing, it indicates the expression was valid and prints a confirmation message.
+void yyerror(): The error handling function.
+
+printf("\nEntered arithmetic expression is Invalid\n\n");: Prints an error message indicating the expression was invalid.
+flag=1;: Sets the flag to 1, indicating an error was encountered.
+Summary
+This Yacc/Bison code defines a parser for arithmetic expressions, supporting addition, subtraction, multiplication, division, modulus operations, and parentheses.
+The main function prompts the user to enter an arithmetic expression and then parses it.
+If the expression is valid, the result is printed. If invalid, an error message is printed.
+The yyerror function sets a flag to indicate an invalid expression and prints an error message.
+
+
+
+

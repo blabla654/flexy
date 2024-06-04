@@ -1,0 +1,240 @@
+Grammar
+
+    0 $accept: sentence $end
+
+    1 sentence: compound
+    2         | simple
+
+    3 simple: subject VERB object
+
+    4 compound: subject VERB object CONJUNCTION subject VERB object
+
+    5 subject: NOUN
+    6        | PRONOUN
+
+    7 object: NOUN
+    8       | ADJECTIVE NOUN
+    9       | VERB NOUN
+   10       | ADVERB NOUN
+   11       | PREPOSITION NOUN
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    NOUN (258) 5 7 8 9 10 11
+    PRONOUN (259) 6
+    ADJECTIVE (260) 8
+    VERB (261) 3 4 9
+    ADVERB (262) 10
+    CONJUNCTION (263) 4
+    PREPOSITION (264) 11
+
+
+Nonterminals, with rules where they appear
+
+    $accept (10)
+        on left: 0
+    sentence (11)
+        on left: 1 2
+        on right: 0
+    simple (12)
+        on left: 3
+        on right: 2
+    compound (13)
+        on left: 4
+        on right: 1
+    subject (14)
+        on left: 5 6
+        on right: 3 4
+    object (15)
+        on left: 7 8 9 10 11
+        on right: 3 4
+
+
+State 0
+
+    0 $accept: . sentence $end
+
+    NOUN     shift, and go to state 1
+    PRONOUN  shift, and go to state 2
+
+    sentence  go to state 3
+    simple    go to state 4
+    compound  go to state 5
+    subject   go to state 6
+
+
+State 1
+
+    5 subject: NOUN .
+
+    $default  reduce using rule 5 (subject)
+
+
+State 2
+
+    6 subject: PRONOUN .
+
+    $default  reduce using rule 6 (subject)
+
+
+State 3
+
+    0 $accept: sentence . $end
+
+    $end  shift, and go to state 7
+
+
+State 4
+
+    2 sentence: simple .
+
+    $default  reduce using rule 2 (sentence)
+
+
+State 5
+
+    1 sentence: compound .
+
+    $default  reduce using rule 1 (sentence)
+
+
+State 6
+
+    3 simple: subject . VERB object
+    4 compound: subject . VERB object CONJUNCTION subject VERB object
+
+    VERB  shift, and go to state 8
+
+
+State 7
+
+    0 $accept: sentence $end .
+
+    $default  accept
+
+
+State 8
+
+    3 simple: subject VERB . object
+    4 compound: subject VERB . object CONJUNCTION subject VERB object
+
+    NOUN         shift, and go to state 9
+    ADJECTIVE    shift, and go to state 10
+    VERB         shift, and go to state 11
+    ADVERB       shift, and go to state 12
+    PREPOSITION  shift, and go to state 13
+
+    object  go to state 14
+
+
+State 9
+
+    7 object: NOUN .
+
+    $default  reduce using rule 7 (object)
+
+
+State 10
+
+    8 object: ADJECTIVE . NOUN
+
+    NOUN  shift, and go to state 15
+
+
+State 11
+
+    9 object: VERB . NOUN
+
+    NOUN  shift, and go to state 16
+
+
+State 12
+
+   10 object: ADVERB . NOUN
+
+    NOUN  shift, and go to state 17
+
+
+State 13
+
+   11 object: PREPOSITION . NOUN
+
+    NOUN  shift, and go to state 18
+
+
+State 14
+
+    3 simple: subject VERB object .
+    4 compound: subject VERB object . CONJUNCTION subject VERB object
+
+    CONJUNCTION  shift, and go to state 19
+
+    $default  reduce using rule 3 (simple)
+
+
+State 15
+
+    8 object: ADJECTIVE NOUN .
+
+    $default  reduce using rule 8 (object)
+
+
+State 16
+
+    9 object: VERB NOUN .
+
+    $default  reduce using rule 9 (object)
+
+
+State 17
+
+   10 object: ADVERB NOUN .
+
+    $default  reduce using rule 10 (object)
+
+
+State 18
+
+   11 object: PREPOSITION NOUN .
+
+    $default  reduce using rule 11 (object)
+
+
+State 19
+
+    4 compound: subject VERB object CONJUNCTION . subject VERB object
+
+    NOUN     shift, and go to state 1
+    PRONOUN  shift, and go to state 2
+
+    subject  go to state 20
+
+
+State 20
+
+    4 compound: subject VERB object CONJUNCTION subject . VERB object
+
+    VERB  shift, and go to state 21
+
+
+State 21
+
+    4 compound: subject VERB object CONJUNCTION subject VERB . object
+
+    NOUN         shift, and go to state 9
+    ADJECTIVE    shift, and go to state 10
+    VERB         shift, and go to state 11
+    ADVERB       shift, and go to state 12
+    PREPOSITION  shift, and go to state 13
+
+    object  go to state 22
+
+
+State 22
+
+    4 compound: subject VERB object CONJUNCTION subject VERB object .
+
+    $default  reduce using rule 4 (compound)

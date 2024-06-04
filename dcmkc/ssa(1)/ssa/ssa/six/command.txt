@@ -1,0 +1,6 @@
+Command for Run Code:
+
+1. lex calc.l
+2. yacc -d calc.y
+3. gcc lex.yy.c y.tab.c -w
+4. ./a.out

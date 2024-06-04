@@ -1,0 +1,266 @@
+%{
+# include<stdio.h>
+# include<string.h>
+struct symtab
+{
+char *name;
+};
+struct symtab sym[10],*k;
+struct symtab *install_id(char *s);
+void disp();
+%}
+
+L    [a-zA-Z]
+D    [0-9]
+id   {L}({L}|{D})*
+num    {D}+(\.{D}+)?([eE][-+]?{D}+)?
+bop    [-+*/=]
+uop    "++"|"--"
+relop  "<"|"<="|">"|">="|"!="|"=="
+lop    "&&"|"||"
+bitlop [&|!]
+kew   "if"|"else"|"while"|"do"|"for"|"int"|"char"|"float"
+pun   [,;'"\[\]\{\}\)\(]
+comment  "/\*"(.|\n)*"\*/"|"//"(.)*
+ws     [ \t\n]+
+st     \"(.)*\"
+
+%%
+{ws} 	{}
+{kew} {printf("keyword=%s\n",yytext);}
+{id} {k=install_id(yytext);printf("identifier =%s\n",yytext);}
+{num} {printf("constant =%s\n",yytext);}
+{bop} {printf("binary op =%s\n",yytext);}
+{uop} {printf("unary op =%s\n",yytext);}
+{relop} {printf("relational op=%s\n",yytext);}
+{lop} {printf("logical op =%s\n",yytext);}
+{pun} {printf("punct =%s\n",yytext);}
+{bitlop}	 {printf("bitwise logical op=%s\n",yytext);}
+{comment} 	{printf("comment =%s\n",yytext);}
+{st} 	{printf("string =%s\n",yytext);}
+%%
+
+int main()
+{
+yylex();
+disp();
+return 0;
+}
+struct symtab *install_id(char *s)
+{
+struct symtab *p;
+printf("in symbol table\n");
+for(p=&sym[0];p<&sym[10];p++)
+{
+if(p->name && !strcmp(s,p->name))
+return p;
+if(!p->name)
+{
+p->name=strdup(s);
+return p;
+}
+}
+}
+void disp()
+{
+struct symtab *p;
+printf("symbol table\n");
+for(p=&sym[0];p<&sym[10];p++)
+{
+if(p->name)
+printf("%s\n",p->name);
+}
+}
+int yywrap()
+{
+return 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+explanation:
+
+Certainly! Let's break down the provided code line by line.
+
+Includes and Definitions
+c
+Copy code
+%{
+# include<stdio.h>
+# include<string.h>
+struct symtab
+{
+    char *name;
+};
+struct symtab sym[10], *k;
+struct symtab *install_id(char *s);
+void disp();
+%}
+%{ ... %}: This section contains C code that is included at the beginning of the generated lexer.
+#include<stdio.h>: Includes the standard input-output library for functions like printf.
+#include<string.h>: Includes the string manipulation library for functions like strdup and strcmp.
+struct symtab: Defines a structure symtab with a single member, name, which is a pointer to a character (i.e., a string).
+struct symtab sym[10], *k;: Declares an array sym of 10 symtab structures and a pointer k to a symtab.
+struct symtab *install_id(char *s);: Declares a function install_id that takes a string and returns a pointer to a symtab.
+void disp();: Declares a function disp that takes no arguments and returns nothing.
+Lexical Definitions
+c
+Copy code
+L    [a-zA-Z]
+D    [0-9]
+id   {L}({L}|{D})*
+num    {D}+(\.{D}+)?([eE][-+]?{D}+)?
+bop    [-+*/=]
+uop    "++"|"--"
+relop  "<"|"<="|">"|">="|"!="|"=="
+lop    "&&"|"||"
+bitlop [&|!]
+kew   "if"|"else"|"while"|"do"|"for"|"int"|"char"|"float"
+pun   [,;'"\[\]\{\}\)\(]
+comment  "/\*"(.|\n)*"\*/"|"//"(.)*
+ws     [ \t\n]+
+st     \"(.)*\"
+The above lines define regular expressions for different types of tokens.
+L: Matches any alphabetic character.
+D: Matches any digit.
+id: Matches an identifier starting with a letter followed by letters or digits.
+num: Matches a numerical constant, including integers and floating-point numbers.
+bop: Matches binary operators.
+uop: Matches unary operators.
+relop: Matches relational operators.
+lop: Matches logical operators.
+bitlop: Matches bitwise logical operators.
+kew: Matches keywords.
+pun: Matches punctuation.
+comment: Matches comments (both multi-line and single-line).
+ws: Matches whitespace.
+st: Matches strings.
+Lexical Rules
+c
+Copy code
+%%
+{ws}    {}
+{kew} {printf("keyword=%s\n",yytext);}
+{id} {k=install_id(yytext); printf("identifier =%s\n",yytext);}
+{num} {printf("constant =%s\n",yytext);}
+{bop} {printf("binary op =%s\n",yytext);}
+{uop} {printf("unary op =%s\n",yytext);}
+{relop} {printf("relational op=%s\n",yytext);}
+{lop} {printf("logical op =%s\n",yytext);}
+{pun} {printf("punct =%s\n",yytext);}
+{bitlop} {printf("bitwise logical op=%s\n",yytext);}
+{comment} {printf("comment =%s\n",yytext);}
+{st} {printf("string =%s\n",yytext);}
+%%
+%%: Marks the beginning and end of the rules section.
+{ws} {}: Ignores whitespace (does nothing when whitespace is encountered).
+{kew} {printf("keyword=%s\n",yytext);}: Prints the matched keyword.
+{id} {k=install_id(yytext); printf("identifier =%s\n",yytext);}: Installs the identifier in the symbol table and prints it.
+{num} {printf("constant =%s\n",yytext);}: Prints the matched numerical constant.
+{bop} {printf("binary op =%s\n",yytext);}: Prints the matched binary operator.
+{uop} {printf("unary op =%s\n",yytext);}: Prints the matched unary operator.
+{relop} {printf("relational op=%s\n",yytext);}: Prints the matched relational operator.
+{lop} {printf("logical op =%s\n",yytext);}: Prints the matched logical operator.
+{pun} {printf("punct =%s\n",yytext);}: Prints the matched punctuation.
+{bitlop} {printf("bitwise logical op=%s\n",yytext);}: Prints the matched bitwise logical operator.
+{comment} {printf("comment =%s\n",yytext);}: Prints the matched comment.
+{st} {printf("string =%s\n",yytext);}: Prints the matched string.
+Main Function and Other Functions
+c
+Copy code
+int main()
+{
+    yylex();
+    disp();
+    return 0;
+}
+
+struct symtab *install_id(char *s)
+{
+    struct symtab *p;
+    printf("in symbol table\n");
+    for(p=&sym[0]; p<&sym[10]; p++)
+    {
+        if(p->name && !strcmp(s, p->name))
+            return p;
+        if(!p->name)
+        {
+            p->name = strdup(s);
+            return p;
+        }
+    }
+}
+
+void disp()
+{
+    struct symtab *p;
+    printf("symbol table\n");
+    for(p=&sym[0]; p<&sym[10]; p++)
+    {
+        if(p->name)
+            printf("%s\n", p->name);
+    }
+}
+
+int yywrap()
+{
+    return 1;
+}
+int main(): Main function of the program.
+yylex();: Calls the lexical analyzer to start processing input.
+disp();: Calls the disp function to display the symbol table.
+return 0;: Returns 0 to indicate successful completion of the program.
+Symbol Table Functions
+struct symtab *install_id(char *s): Function to install an identifier into the symbol table.
+
+struct symtab *p;: Declares a pointer p to a symtab.
+printf("in symbol table\n");: Prints a message indicating the function is running.
+for(p=&sym[0]; p<&sym[10]; p++): Loops through the symbol table.
+if(p->name && !strcmp(s, p->name)) return p;: If the identifier is already in the symbol table, return its pointer.
+if(!p->name): If an empty slot is found:
+p->name = strdup(s);: Copy the identifier string to the symbol table.
+return p;: Return the pointer to the new entry.
+void disp(): Function to display the contents of the symbol table.
+
+struct symtab *p;: Declares a pointer p to a symtab.
+printf("symbol table\n");: Prints a header for the symbol table display.
+for(p=&sym[0]; p<&sym[10]; p++): Loops through the symbol table.
+if(p->name) printf("%s\n", p->name);: If the slot is not empty, print the identifier.
+int yywrap(): Function called by yylex when the end of input is reached.
+
+return 1;: Returns 1 to indicate end of input processing.
+Summary
+This program is a lexical analyzer written using Lex/Flex that processes an input string, recognizes various tokens (keywords, identifiers, constants, operators, etc.), prints them, and maintains a symbol table for identifiers. The install_id function manages the symbol table, and disp prints the symbol table's contents. The program processes input through yylex, and when finished, displays the symbol table contents.
+
+commands 2nd:
+lex filename.l
+gcc lex.yy.c
+./a.out < filename.txt
+
+
+
+
+
+
+
+
+ChatGPT can make mistakes. Check important info.
+
